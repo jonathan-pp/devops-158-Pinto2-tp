@@ -12,6 +12,11 @@ pipeline {
         stage('Pull latest code') {
             steps {
                 sh '''
+<<<<<<< HEAD
+=======
+                    git config --global --add safe.directory /home/pi_158_pinto2/devops-158-Pinto2-tp
+
+>>>>>>> 80b25e3 (test)
                     if [ -d "/home/pi_158_pinto2/devops-158-Pinto2-tp/.git" ]; then
                         cd /home/pi_158_pinto2/devops-158-Pinto2-tp/
                         git pull origin main
