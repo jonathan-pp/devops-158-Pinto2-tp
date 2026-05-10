@@ -1,25 +1,27 @@
 pipeline {
     agent any
-
     triggers {
-        pollSCM('* * * * *')  // vérifie toutes les minutes
+        pollSCM('* * * * *')
     }
-
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/jonathan-pp/devops-158-Pinto2-tp.git'
             }
         }
-
         stage('Pull latest code') {
             steps {
-                dir('/home/pi_158_pinto2/devops-158-Pinto2-tp/') {
-                    git branch: 'main', url: 'https://github.com/jonathan-pp/devops-158-Pinto2-tp.git'
-                }
+                sh '''
+                    if [ -d "/home/pi_158_pinto2/devops-158-Pinto2-tp/.git" ]; then
+                        cd /home/pi_158_pinto2/devops-158-Pinto2-tp/
+                        git pull origin main
+                    else
+                        git clone https://github.com/jonathan-pp/devops-158-Pinto2-tp.git \
+                            /home/pi_158_pinto2/devops-158-Pinto2-tp/
+                    fi
+                '''
             }
         }
-
         stage('Install dependencies') {
             steps {
                 dir('/home/pi_158_pinto2/devops-158-Pinto2-tp/') {
@@ -30,21 +32,17 @@ pipeline {
                 }
             }
         }
-
         stage('Restart Flask app') {
             steps {
-                script {
-                    sh 'pkill -f "python app.py" || true'
-                    sh '''
-                        cd /home/pi_158_pinto2/devops-158-Pinto2-tp/
-                        source venv/bin/activate
-                        nohup python app.py > flask.log 2>&1 &
-                    '''
-                }
+                sh '''
+                    pkill -f "python app.py" || true
+                    cd /home/pi_158_pinto2/devops-158-Pinto2-tp/
+                    source venv/bin/activate
+                    nohup python app.py > flask.log 2>&1 &
+                '''
             }
         }
     }
-
     post {
         success {
             echo 'Déploiement automatique réussi ! BRAVO DAMN'
