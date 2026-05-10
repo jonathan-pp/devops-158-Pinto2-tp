@@ -1,14 +1,17 @@
 pipeline {
     agent any
+
     triggers {
-        pollSCM('* * * * *')
+        pollSCM('* * * * *')  // vérifie toutes les minutes
     }
+
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/jonathan-pp/devops-158-Pinto2-tp.git'
             }
         }
+
         stage('Pull latest code') {
             steps {
                 dir('/home/pi_158_pinto2/devops-158-Pinto2-tp/') {
@@ -16,21 +19,23 @@ pipeline {
                 }
             }
         }
+
         stage('Install dependencies') {
             steps {
                 dir('/home/pi_158_pinto2/devops-158-Pinto2-tp/') {
-                    sh '''#!/bin/bash
+                    sh '''
                         source venv/bin/activate
                         pip install flask
                     '''
                 }
             }
         }
+
         stage('Restart Flask app') {
             steps {
                 script {
                     sh 'pkill -f "python app.py" || true'
-                    sh '''#!/bin/bash
+                    sh '''
                         cd /home/pi_158_pinto2/devops-158-Pinto2-tp/
                         source venv/bin/activate
                         nohup python app.py > flask.log 2>&1 &
@@ -39,6 +44,7 @@ pipeline {
             }
         }
     }
+
     post {
         success {
             echo 'Déploiement automatique réussi ! BRAVO DAMN'
