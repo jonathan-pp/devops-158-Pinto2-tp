@@ -29,7 +29,7 @@ pipeline {
         stage('Restart Flask app') {
             steps {
                 script {
-                    sh 'pkill -f "python app.py" || true'
+                    sh 'sudo pkill -f "python app.py" || true'
                     sh '''#!/bin/bash
                         cd /home/pi_158_pinto2/devops-158-Pinto2-tp/
                         source venv/bin/activate
