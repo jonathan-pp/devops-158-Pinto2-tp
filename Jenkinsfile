@@ -34,7 +34,6 @@ pipeline {
                         cd /home/pi_158_pinto2/devops-158-Pinto2-tp/
                         source venv/bin/activate
                         nohup python app.py > flask.log 2>&1 &
-                        sudo systemctl restart flask-app
                     '''
                 }
             }
